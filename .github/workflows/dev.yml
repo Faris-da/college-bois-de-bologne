@@ -1,22 +1,26 @@
 name: Deploy Dev Environment
 
-
 on:
-    push:
-      branches:
-          - dev # Ce workflow s'exécute uniquement pour la branche dev
+  push:
+    branches:
+      - dev  # Ce workflow s'exécute uniquement pour la branche dev
 
+# Donne à GITHUB_TOKEN le droit d'écrire sur le repo (push sur gh-pages)
+permissions:
+  contents: write
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest # Utilise une machine virtuelle Ubuntu
-    steps:
-    - name: Checkout code # Étape pour cloner le code source de la branche dev
-    uses: actions/checkout@v2
+  deploy:
+    runs-on: ubuntu-latest
 
-    - name: Deploy to GitHub Pages (Dev) # Étape pour déployer sur GitHub Pages
-    uses: peaceiris/actions-gh-pages@v3 # Utilise l'action pour GitHub Pages
-    with:
-        github_token: ${{ secrets.GITHUB_TOKEN }} # Utilise le token GitHub pour autoriser le déploiement
-        publish_dir: ./ # Spécifie le répertoire source à publier, ici la racine du dépôt
-        destination_dir: dev # Déploie les fichiers dans le dossier /dev dans gh-pages
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages (Dev)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages     # branche de publication (par défaut: gh-pages)
+          publish_dir: .               # ce que tu veux publier (ici la racine du repo)
+          destination_dir: dev         # publié dans /dev sur la branche gh-pages
