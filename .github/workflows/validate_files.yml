@@ -16,6 +16,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+            python-version: "3.x"
+
       - name: Check if index.html or style.css exist
         run: |
           if [ ! -f index.html ]; then
@@ -27,3 +32,24 @@ jobs:
             exit 1
           fi
           echo "All required files are present ✅"
+
+      - name: script py check Index.html content
+        run: |
+          python - <<'PY'
+          import os, sys
+
+          # Test 1: existence des fichiers
+          for fn in ("index.html", "style.css"):
+              if not os.path.exists(fn):
+                  print(f"ERROR: {fn} est manquant!")
+                  sys.exit(1)
+
+          # Test 2: contenu attendu dans index.html
+          with open("index.html", "r", encoding="utf-8") as f:
+              content = f.read()
+          if '<span id="nom_etudiant">' not in content:
+              print('ERROR: Le champ <span id="nom_etudiant"> est manquant!')
+              sys.exit(1)
+
+          print("Tous les tests sont passés ✅")
+          PY
